@@ -139,7 +139,7 @@ class TestStylesheet < Test::Unit::TestCase
     # output method is html -> no xml decl, empty tags not closed...
     assert xml =~ /^<html>/
     assert xml =~ /<meta http-equiv="Content-Type" content="text\/html; charset=UTF-8">\n<title>/
-    assert_equal(6034, xml.length)
+    assert_equal(5987, xml.length)
   end
 
   def test_dump_result
@@ -154,7 +154,7 @@ class TestStylesheet < Test::Unit::TestCase
     # output method is html -> no xml decl, empty tags not closed...
     assert xml =~ /^<html>/
     assert xml =~ /<meta http-equiv="Content-Type" content="text\/html; charset=UTF-8">\n<title>/
-    assert_equal(6034, xml.length)
+    assert_equal(5987, xml.length)
   end
 
   def test_transform_to_file
@@ -167,7 +167,7 @@ class TestStylesheet < Test::Unit::TestCase
     stylesheet.transform_to_file(doc, File.open(filename, "w"))
     xml = File.open(filename).read
 
-    assert_equal(6034, xml.length)
+    assert_equal(5987, xml.length)
   end
 
   def test_transform_to_string
@@ -177,7 +177,7 @@ class TestStylesheet < Test::Unit::TestCase
     
     xml = stylesheet.transform_to_string(doc)
 
-    assert_equal(6034, xml.length)
+    assert_equal(5987, xml.length)
   end
 
   def test_entities

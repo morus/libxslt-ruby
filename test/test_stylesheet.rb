@@ -76,7 +76,7 @@ class TestStylesheet < Test::Unit::TestCase
       
       stylesheet = nil
       GC.start
-      assert_equal(156, sdoc.to_s.length)
+      assert_equal(173, sdoc.to_s.length)
     end
   end 
      
@@ -90,7 +90,7 @@ class TestStylesheet < Test::Unit::TestCase
       GC.start
       
       rdoc = stylesheet.apply(doc)
-      assert_equal(5993, rdoc.to_s.length)
+      assert_equal(5963, rdoc.to_s.length)
     end
   end
       

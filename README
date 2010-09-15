@@ -1,5 +1,14 @@
 = libxslt-ruby
 
+== FORKED VERSION
+
+This version has been forked to provide xslt output methods that serialize the result of a xslt transformation according to the settings choosen in the stylesheet.
+
+See http://rubyforge.org/tracker/index.php?func=detail&aid=23352&group_id=495&atid=1969
+
+I renamed the gem to avoid confusion into libxslt-ruby-mw while the library name remains the same. One should not install libxslt-ruby and libxslt-ruby-mw gems at the same time.
+
+
 == Overview
 
 The libxslt gem provides Ruby language bindings for GNOME's Libxslt

@@ -8,6 +8,7 @@ See http://rubyforge.org/tracker/index.php?func=detail&aid=23352&group_id=495&at
 
 I renamed the gem to avoid confusion into libxslt-ruby-mw while the library name remains the same. One should not install libxslt-ruby and libxslt-ruby-mw gems at the same time.
 
+The version has also been updated to gem version 0.9.7 by hand.
 
 == Overview
 

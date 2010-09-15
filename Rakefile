@@ -24,7 +24,7 @@ FILES = FileList[
 
 # Default GEM Specification
 default_spec = Gem::Specification.new do |spec|
-  spec.name = "libxslt-ruby"
+  spec.name = "libxslt-ruby-mw"
   
   spec.homepage = "http://libxslt.rubyforge.org/"
   spec.summary = "Ruby libxslt bindings"

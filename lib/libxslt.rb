@@ -11,3 +11,4 @@ end
 require 'libxslt_ruby'
 
 require 'libxslt/deprecated'
+require 'libxslt/stylesheet'

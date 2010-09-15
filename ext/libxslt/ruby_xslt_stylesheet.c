@@ -4,6 +4,7 @@
 
 #include "libxslt.h"
 #include "ruby_xslt_stylesheet.h"
+#include "libxml/ruby_xml_document.h"
 
 /*
  * Document-class: LibXSLT::XSLT::Stylesheet
@@ -262,6 +263,95 @@ ruby_xslt_stylesheet_print(int argc, VALUE *argv, VALUE self) {
   return(INT2NUM(bytes));
 }*/
 
+/* call-seq: 
+ *   stylesheet.save_result(doc, to = $stdout) => number_of_bytes
+ * 
+ * Output an xml document, usually the result of an xslt transformation,
+ * to the specified output stream (an IO instance, defaults to $stdout).
+ * Output will be done according to the output specification in the xslt
+ * stylesheet.
+ * 
+ * Returns the number of bytes written.
+ */
+VALUE
+ruby_xslt_stylesheet_save_result(int argc, VALUE *argv, VALUE self) {
+  xmlDocPtr xdoc;
+  xsltStylesheetPtr xstylesheet;
+  VALUE document;
+  OpenFile *fptr;
+  VALUE io;
+  FILE *out;
+  int bytes;
+  
+  if (argc > 2 || argc < 1)
+    rb_raise(rb_eArgError, "wrong number of arguments (need 1 or 2)");
+    
+  document = argv[0];
+  
+  if (!rb_obj_is_kind_of(document, ruby_xslt_stylesheet_document_klass()))
+    rb_raise(rb_eTypeError, "Must pass in an XML::Document instance.");
+
+  switch (argc) {
+  case 1:
+    io = rb_stdout;
+    break;
+  case 2:
+    io = argv[1];
+    if (rb_obj_is_kind_of(io, rb_cIO) == Qfalse)
+      rb_raise(rb_eTypeError, "need an IO object");
+    break;
+  default:
+    rb_raise(rb_eArgError, "wrong number of arguments (1 or 2)");
+  }
+
+  GetOpenFile(io, fptr);
+  rb_io_check_writable(fptr);
+  out = GetWriteFile(fptr);
+
+  Data_Get_Struct(document, xmlDoc, xdoc);
+  Data_Get_Struct(self, xsltStylesheet, xstylesheet);
+  
+  bytes = xsltSaveResultToFile(out, xdoc, xstylesheet);
+  if ( bytes == -1 ) {
+    rb_raise(rb_eRuntimeError, "error saving document");
+  }
+
+  return(INT2NUM(bytes));
+}
+
+/* call-seq: 
+ *   stylesheet.dump_result(doc) => string
+ * 
+ * Dump an xml document, usually the result of an xslt transformation,
+ * and return the result as a string.
+ * Output will be done according to the output specification in the xslt
+ * stylesheet. Note that this includes the encoding of the string.
+ */
+VALUE
+ruby_xslt_stylesheet_dump_result(VALUE self, VALUE document) {
+// FIXME: set string encoding in ruby 1.9?
+  xmlDocPtr xdoc;
+  xsltStylesheetPtr xstylesheet;
+  xmlChar *result = NULL;
+  int len = 0, bytes = 0;
+  VALUE rresult;
+  
+  if (!rb_obj_is_kind_of(document, ruby_xslt_stylesheet_document_klass()))
+    rb_raise(rb_eTypeError, "Must pass in an XML::Document instance.");
+
+  Data_Get_Struct(document, xmlDoc, xdoc);
+  Data_Get_Struct(self, xsltStylesheet, xstylesheet);
+  
+  bytes = xsltSaveResultToString(&result, &len,
+				 xdoc, xstylesheet);
+  if ( bytes == -1 ) {
+    rb_raise(rb_eRuntimeError, "error dumping document");
+  }
+
+  rresult=rb_str_new((const char*)result,len);
+  xmlFree(result);
+  return rresult;
+}
 
 #ifdef RDOC_NEVER_DEFINED
   cLibXSLT = rb_define_module("LibXSLT");
@@ -274,4 +364,6 @@ ruby_init_xslt_stylesheet(void) {
   rb_define_alloc_func(cXSLTStylesheet, ruby_xslt_stylesheet_alloc);
   rb_define_method(cXSLTStylesheet, "initialize", ruby_xslt_stylesheet_initialize, 1);
   rb_define_method(cXSLTStylesheet, "apply", ruby_xslt_stylesheet_apply, -1);
+  rb_define_method(cXSLTStylesheet, "save_result", ruby_xslt_stylesheet_save_result, -1);
+  rb_define_method(cXSLTStylesheet, "dump_result", ruby_xslt_stylesheet_dump_result, 1);
 }
